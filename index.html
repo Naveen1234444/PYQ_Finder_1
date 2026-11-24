@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>PYQ — UPSC Previous Year Questions</title>
+<style>
+:root{--bg:#f4f6fa;--panel:#fff;--ink:#172033;--muted:#697386;--line:#e4e8ef;--nav:#111c2e;--accent:#2563eb;--soft:#eaf1ff;--good:#13834b;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,Segoe UI,Arial,sans-serif}
+header{background:var(--nav);color:white;padding:17px max(20px,calc((100vw - 1200px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:5}
+.brand{font-size:24px;font-weight:850;letter-spacing:1px}.brand small{display:block;font-size:11px;color:#b9c5d7;font-weight:500;letter-spacing:.3px}
+header .tag{font-size:12px;color:#cbd5e1;border:1px solid #43516a;border-radius:30px;padding:5px 10px}
+.wrap{max-width:1200px;margin:26px auto;padding:0 18px}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:20px}.hero h1{margin:0;font-size:27px}.muted{color:var(--muted)}.small{font-size:12px}
+nav{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 14px;cursor:pointer;font-weight:650;color:#455066}.tab.active{background:var(--accent);border-color:var(--accent);color:white}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 3px 14px #15223b08}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:16px}.stat b{display:block;font-size:26px}.stat span{font-size:12px;color:var(--muted)}
+.controls{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:10px}input,select,textarea{width:100%;border:1px solid #d8deea;border-radius:9px;padding:11px 12px;background:white;color:var(--ink);font:inherit}button{border:0;border-radius:9px;padding:10px 14px;background:var(--accent);color:white;font-weight:700;cursor:pointer}button.secondary{background:#eef2f8;color:#263247;border:1px solid var(--line)}button.danger{background:#fff0ef;color:#a32b22;border:1px solid #f2cfcb}button:disabled{opacity:.5;cursor:not-allowed}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0;background:#fff}.qtop{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px}.q h3{font-size:16px;line-height:1.55;margin:12px 0}.options{display:grid;gap:8px}.option{padding:9px 11px;border:1px solid var(--line);border-radius:8px}.option.correct{border-color:#80c9a1;background:#edfff4}.option.wrong{border-color:#e8a09a;background:#fff3f2}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.pill{display:inline-block;border-radius:30px;padding:3px 9px;background:#edf2f9;color:#4b5870;font-size:11px;margin:2px}.empty{text-align:center;padding:35px;color:var(--muted)}.hidden{display:none!important}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.progress{height:9px;background:#edf0f5;border-radius:10px;overflow:hidden}.progress i{display:block;height:100%;background:var(--accent)}.notice{padding:12px;border-radius:9px;background:#fff8e8;border:1px solid #f2dfad;color:#74520a;font-size:13px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.controls{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.two{grid-template-columns:1fr}}
+@media(max-width:480px){.controls{grid-template-columns:1fr}.wrap{padding:0 12px}.panel{padding:14px}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+<header><div class="brand">PYQ<small>UPSC PREVIOUS YEAR QUESTIONS</small></div><span class="tag">Prelims GS · Personal study workspace</span></header>
+<main class="wrap">
+ <section class="hero"><div><div class="small muted">YOUR QUESTION BANK</div><h1>Find. Practise. Improve.</h1><div class="muted">Search UPSC PYQs by concept, topic, subject or year.</div></div><button id="importTop">＋ Import questions</button></section>
+ <section class="grid">
+  <div class="panel stat"><b id="totalStat">0</b><span>Questions in bank</span></div>
+  <div class="panel stat"><b id="yearStat">—</b><span>Years covered</span></div>
+  <div class="panel stat"><b id="bookStat">0</b><span>Bookmarked</span></div>
+  <div class="panel stat"><b id="attemptStat">0</b><span>Questions attempted</span></div>
+ </section>
+ <nav>
+  <button class="tab active" data-tab="search">Question search</button><button class="tab" data-tab="practice">Practice tests</button><button class="tab" data-tab="bookmarks">Bookmarks</button><button class="tab" data-tab="analytics">Analytics</button><button class="tab" data-tab="import">Import & manage</button><button class="tab" data-tab="ai">AI Study Assistant</button>
+ </nav>
+ <section id="search" class="view">
+  <div class="panel">
+   <div class="controls">
+    <div><label>Search topic, concept or question text</label><input id="query" placeholder="e.g. Fundamental Rights, monsoon, inflation…"></div>
+    <div><label>Year</label><select id="year"><option value="">All years</option></select></div>
+    <div><label>Subject</label><select id="subject"><option value="">All subjects</option></select></div>
+    <div><label>Topic</label><select id="topic"><option value="">All topics</option></select></div>
+   </div>
+   <div class="actions"><button id="clearFilters" class="secondary">Clear filters</button><span class="muted small" id="resultCount" style="align-self:center">0 results</span></div>
+  </div>
+  <div id="results"></div>
+ </section>
+ <section id="practice" class="view hidden">
+  <div class="panel"><h2>Create a topic test</h2><div class="two">
+   <div><label>Subject</label><select id="testSubject"><option value="">All subjects</option></select></div>
+   <div><label>Topic</label><select id="testTopic"><option value="">All topics</option></select></div>
+   <div><label>Number of questions</label><select id="testSize"><option>10</option><option>20</option><option>25</option><option>50</option><option>100</option></select></div>
+   <div><label>Test mode</label><select id="testMode"><option value="timed">Timed · 2 minutes/question</option><option value="untimed">Untimed practice</option></select></div>
+  </div><div class="actions"><button id="startTest">Generate test</button></div></div>
+  <div id="testArea"></div>
+ </section>
+ <section id="bookmarks" class="view hidden"><div class="panel"><h2>Saved questions</h2><div class="muted small">Questions you bookmark for revision.</div></div><div id="bookmarkResults"></div></section>
+ <section id="analytics" class="view hidden"><div class="panel"><h2>Performance overview</h2><div id="analyticsBody" class="muted">Attempt questions in practice mode to see your performance.</div></div></section>
+
+ <section id="ai" class="view hidden">
+  <div class="panel">
+   <h2>ChatGPT Study Assistant</h2>
+   <p class="muted">Ask questions across your uploaded PDFs. Answers are grounded in indexed documents when relevant sources are found.</p>
+   <label>Upload one or more PDF files</label>
+   <input type="file" id="aiPdfs" accept="application/pdf,.pdf" multiple>
+   <div class="actions"><button id="uploadPdfs">Upload & index PDFs</button><span id="uploadStatus" class="muted small"></span></div>
+   <div class="notice">Your OpenAI API key stays on the backend server. Do not paste it into this page or upload it to GitHub.</div>
+  </div>
+  <div class="panel">
+   <h3>Your indexed PDF library</h3><div id="aiFiles" class="muted small">Loading library…</div>
+  </div>
+  <div class="panel">
+   <h3>Ask your study assistant</h3>
+   <div id="chatHistory" style="display:grid;gap:12px;margin:12px 0"></div>
+   <label>Your question</label><textarea id="aiQuestion" rows="3" placeholder="e.g. Find all PYQs on Fundamental Rights and compare how UPSC tested the concept."></textarea>
+   <div class="actions"><button id="askAI">Ask ChatGPT</button><button class="secondary" id="clearChat">Clear chat</button></div>
+   <div id="aiAnswerStatus" class="muted small"></div>
+  </div>
+ </section>
+ <section id="import" class="view hidden">
+  <div class="panel"><h2>Import your PYQ data</h2><p class="muted">Import structured JSON/CSV question banks or upload a PDF. Imported questions stay in this browser until exported or cleared.</p>
+   <div class="two">
+    <div><label>Question bank file (JSON or CSV)</label><input type="file" id="dataFile" accept=".json,.csv,application/json,text/csv"></div>
+    <div><label>UPSC question paper PDF</label><input type="file" id="pdfFile" accept=".pdf,application/pdf"></div>
+   </div><div class="actions"><button id="importData">Import data</button><button id="readPdf" class="secondary">Extract PDF questions</button><button id="exportData" class="secondary">Export question bank</button></div>
+   <div id="importStatus" class="small muted" style="margin-top:12px"></div>
+  </div>
+  <div class="panel"><h3>Question record format</h3><p class="muted small">Each record should preserve the original wording and source. Fields: year, paper, question_number, subject, topic, subtopic, question, options (A–D), answer, explanation, source, tags.</p><pre style="white-space:pre-wrap;background:#f6f8fb;padding:12px;border-radius:8px;font-size:12px">[
+ {"year":2015,"paper":"GS Paper I","question_number":1,
+  "subject":"Polity","topic":"Fundamental Rights",
+  "subtopic":"Right to Equality",
+  "question":"Original question text",
+  "options":{"A":"Option one","B":"Option two","C":"Option three","D":"Option four"},
+  "answer":"B","explanation":"","source":"UPSC CSE Prelims 2015"}
+]</pre>
+   <div class="notice">PDF extraction can recover selectable text. Scanned pages need OCR and manual verification. Extraction does not automatically create verified question/answer records; match the official answer key separately.</div>
+  </div>
+  <div class="panel"><h3>Data management</h3><div class="actions"><button id="clearData" class="danger">Clear local question bank</button></div></div>
+ </section>
+</main><footer>PYQ · Personal UPSC preparation tool · Verify answers against official UPSC answer keys.</footer>
+<script>
+const KEY='pyq_bank_v1', ATT='pyq_attempts_v1', BOOK='pyq_bookmarks_v1';
+let questions=JSON.parse(localStorage.getItem(KEY)||'[]'), attempts=JSON.parse(localStorage.getItem(ATT)||'[]'), bookmarks=new Set(JSON.parse(localStorage.getItem(BOOK)||'[]')), activeTest=null, timer=null;
+const $=id=>document.getElementById(id);
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(questions));localStorage.setItem(ATT,JSON.stringify(attempts));localStorage.setItem(BOOK,JSON.stringify([...bookmarks]));renderStats();};
+const norm=s=>(s||'').toString().toLowerCase().normalize('NFKD').replace(/[^\w\s]/g,' ').replace(/\s+/g,' ').trim();
+const unique=a=>[...new Set(a.filter(Boolean).map(String))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+function id(q){return [q.year,q.paper,q.question_number,q.question].join('|')}
+function populate(select,values,all){let old=select.value;select.innerHTML=`<option value="">${all}</option>`+unique(values).map(v=>`<option>${esc(v)}</option>`).join('');if([...select.options].some(o=>o.value===old))select.value=old}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderStats(){$('totalStat').textContent=questions.length;$('yearStat').textContent=unique(questions.map(q=>q.year)).length;$('bookStat').textContent=bookmarks.size;$('attemptStat').textContent=attempts.reduce((n,a)=>n+(a.count||0),0)}
+function filters(){populate($('year'),questions.map(q=>q.year),'All years');populate($('subject'),questions.map(q=>q.subject),'All subjects');populate($('topic'),questions.map(q=>q.topic),'All topics');populate($('testSubject'),questions.map(q=>q.subject),'All subjects');populate($('testTopic'),questions.map(q=>q.topic),'All topics')}
+function matches(q){let term=norm($('query').value),hay=norm([q.question,q.subject,q.topic,q.subtopic,(q.tags||[]).join(' '),q.explanation].join(' '));return (!term||hay.includes(term))&&(!$('year').value||String(q.year)===$('year').value)&&(!$('subject').value||q.subject===$('subject').value)&&(!$('topic').value||q.topic===$('topic').value)}
+function renderQuestion(q,showAnswer=false){let key=id(q),saved=bookmarks.has(key),opts=q.options||{};return `<article class="q"><div class="qtop"><span>${esc(q.year||'Year unknown')} · ${esc(q.paper||'GS Paper I')} · Q${esc(q.question_number??'—')}</span><span>${esc(q.subject||'Unclassified')} / ${esc(q.topic||'Unclassified')}</span></div><h3>${esc(q.question||'Question text missing')}</h3><div class="options">${['A','B','C','D'].map(k=>`<div class="option">${k}. ${esc(opts[k]??'')}</div>`).join('')}</div>${showAnswer?`<p><b>Answer: ${esc(q.answer||'Not provided')}</b></p><p class="muted small">${esc(q.explanation||'No explanation supplied.')}</p>`:''}<div class="actions"><button class="secondary" onclick="toggleBook('${encodeURIComponent(key)}')">${saved?'★ Saved':'☆ Bookmark'}</button><button class="secondary" onclick="toggleAnswer(this)">Show answer</button><span class="pill">${esc(q.subtopic||'')}</span></div><div class="answer hidden"><b>Answer: ${esc(q.answer||'Not provided')}</b><p class="muted small">${esc(q.explanation||'No explanation supplied.')}</p><span class="small muted">Source: ${esc(q.source||'Not specified')}</span></div></article>`}
+window.toggleAnswer=el=>{let a=el.closest('.q').querySelector('.answer');a.classList.toggle('hidden');el.textContent=a.classList.contains('hidden')?'Show answer':'Hide answer'};
+window.toggleBook=encoded=>{let k=decodeURIComponent(encoded);bookmarks.has(k)?bookmarks.delete(k):bookmarks.add(k);save();render();};
+function render(){let list=questions.filter(matches);$('resultCount').textContent=`${list.length} result${list.length===1?'':'s'}`;$('results').innerHTML=list.length?list.map(q=>renderQuestion(q)).join(''):'<div class="panel empty">No matching questions yet.<br>Import your verified PYQ question bank to begin.</div>';let b=questions.filter(q=>bookmarks.has(id(q)));$('bookmarkResults').innerHTML=b.length?b.map(q=>renderQuestion(q)).join(''):'<div class="panel empty">No saved questions yet.</div>';renderAnalytics()}
+function renderAnalytics(){let total=attempts.reduce((n,a)=>n+(a.count||0),0),correct=attempts.reduce((n,a)=>n+(a.correct||0),0);if(!total){$('analyticsBody').textContent='No attempts recorded yet. Complete a practice test to see accuracy and weak topics.';return}let pct=Math.round(correct/total*100);$('analyticsBody').innerHTML=`<div class="grid"><div class="stat"><b>${total}</b><span>Attempted</span></div><div class="stat"><b>${correct}</b><span>Correct</span></div><div class="stat"><b>${total-correct}</b><span>Incorrect</span></div><div class="stat"><b>${pct}%</b><span>Accuracy</span></div></div><p>Overall accuracy</p><div class="progress"><i style="width:${pct}%"></i></div><h3>Recent tests</h3>${attempts.slice(-10).reverse().map(a=>`<p>${esc(a.date)} · ${esc(a.label)} · ${a.correct}/${a.count} correct (${Math.round(a.correct/a.count*100)}%)</p>`).join('')}`}
+function setTab(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==name));if(name==='bookmarks'||name==='search')render()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));$('importTop').onclick=()=>setTab('import');
+['query','year','subject','topic'].forEach(k=>$(k).addEventListener(k==='query'?'input':'change',render));
+$('clearFilters').onclick=()=>{['query','year','subject','topic'].forEach(k=>$(k).value='');render()};
+function normalizeRecord(q){return {year:q.year??'',paper:q.paper||'GS Paper I',question_number:q.question_number??q.qno??'',subject:q.subject||'',topic:q.topic||'',subtopic:q.subtopic||'',question:q.question||q.text||'',options:q.options||{A:q.A||'',B:q.B||'',C:q.C||'',D:q.D||''},answer:String(q.answer||'').toUpperCase(),explanation:q.explanation||'',source:q.source||'',tags:q.tags||[]}}
+$('importData').onclick=async()=>{let f=$('dataFile').files[0];if(!f){$('importStatus').textContent='Choose a JSON or CSV file first.';return}try{let text=await f.text(),data;if(f.name.endsWith('.json'))data=JSON.parse(text);else{let lines=text.trim().split(/\r?\n/),heads=lines.shift().split(',').map(x=>x.trim());data=lines.map(line=>{let vals=line.split(',');return Object.fromEntries(heads.map((h,i)=>[h,vals[i]||'']))})}if(!Array.isArray(data))throw Error('JSON must contain an array of question objects.');let incoming=data.map(normalizeRecord).filter(q=>q.question);let known=new Set(questions.map(id));let fresh=incoming.filter(q=>!known.has(id(q)));questions.push(...fresh);save();filters();render();$('importStatus').textContent=`Imported ${fresh.length} new questions. ${incoming.length-fresh.length} duplicates skipped.`}catch(e){$('importStatus').textContent='Import failed: '+e.message}};
+$('exportData').onclick=()=>download('pyq-question-bank.json',JSON.stringify(questions,null,2),'application/json');
+function download(name,content,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([content],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+$('clearData').onclick=()=>{if(confirm('Delete all locally stored questions, bookmarks and attempts? Export a backup first if needed.')){questions=[];attempts=[];bookmarks.clear();save();filters();render();$('importStatus').textContent='Local data cleared.'}};
+$('readPdf').onclick=async()=>{let f=$('pdfFile').files[0];if(!f){$('importStatus').textContent='Choose a PDF first.';return}if(!window.pdfjsLib){$('importStatus').textContent='PDF reader library did not load. Check your internet connection and reload.';return}try{pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';let pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise,all='';for(let p=1;p<=pdf.numPages;p++){let page=await pdf.getPage(p),content=await page.getTextContent(),txt=content.items.map(x=>x.str).join(' ');if(txt.trim().length<20&&window.Tesseract){$('importStatus').textContent=`OCR processing scanned page ${p}/${pdf.numPages}…`;let vp=page.getViewport({scale:1.6}),canvas=document.createElement('canvas');canvas.width=vp.width;canvas.height=vp.height;await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;let result=await Tesseract.recognize(canvas,'eng');txt=result.data.text}all+=`\n\n--- PAGE ${p} ---\n${txt}`}download(f.name.replace(/\.pdf$/i,'')+'-extracted.txt',all,'text/plain');$('importStatus').textContent=`Extracted ${pdf.numPages} pages. Review the text, correct OCR errors, and structure questions into JSON before importing. Answers are not inferred.`}catch(e){$('importStatus').textContent='PDF extraction failed: '+e.message}};
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+$('startTest').onclick=()=>{let pool=questions.filter(q=>(!$('testSubject').value||q.subject===$('testSubject').value)&&(!$('testTopic').value||q.topic===$('testTopic').value));if(!pool.length){$('testArea').innerHTML='<div class="notice">No questions match these filters. Import PYQs first.</div>';return}let count=Math.min(Number($('testSize').value),pool.length);activeTest={items:shuffle(pool).slice(0,count),answers:{},start:Date.now(),seconds:$('testMode').value==='timed'?count*120:0};drawTest();if(timer)clearInterval(timer);if(activeTest.seconds){timer=setInterval(()=>{activeTest.seconds--;let t=$('clock');if(t)t.textContent=`${Math.floor(activeTest.seconds/60)}:${String(activeTest.seconds%60).padStart(2,'0')}`;if(activeTest.seconds<=0)submitTest()},1000)}};
+function drawTest(){let t=activeTest;$('testArea').innerHTML=`<div class="panel"><div class="qtop"><b>Practice test · ${t.items.length} questions</b><b id="clock">${t.seconds?Math.floor(t.seconds/60)+':00':'Untimed'}</b></div>${t.items.map((q,i)=>`<article class="q"><div class="qtop">Question ${i+1} · ${esc(q.year)} · ${esc(q.topic)}</div><h3>${esc(q.question)}</h3><div class="options">${['A','B','C','D'].map(k=>`<label class="option"><input style="width:auto" type="radio" name="q${i}" value="${k}" onchange="activeTest.answers[${i}]='${k}'"> ${k}. ${esc(q.options?.[k]||'')}</label>`).join('')}</div></article>`).join('')}<button id="submitTest">Submit test</button></div>`;$('submitTest').onclick=submitTest}
+function submitTest(){if(!activeTest)return;if(timer)clearInterval(timer);let t=activeTest,correct=0,wrong=0,unanswered=0;let details=t.items.map((q,i)=>{let a=t.answers[i]||'',ok=a&&a===q.answer;if(ok)correct++;else if(a)wrong++;else unanswered++;return {q,a,ok}});let score=correct*2-(wrong*2/3);attempts.push({date:new Date().toLocaleString(),label:$('testTopic').value||$('testSubject').value||'Mixed PYQs',count:t.items.length,correct,wrong,unanswered,score});save();$('testArea').innerHTML=`<div class="panel"><h2>Test result</h2><div class="grid"><div class="stat"><b>${correct}/${t.items.length}</b><span>Correct</span></div><div class="stat"><b>${wrong}</b><span>Incorrect</span></div><div class="stat"><b>${unanswered}</b><span>Unanswered</span></div><div class="stat"><b>${score.toFixed(2)}</b><span>Score · +2 / −0.667</span></div></div><p>Review your answers below.</p></div>`+details.map(d=>renderQuestion(d.q,true)+`<div class="small ${d.ok?'':'muted'}">Your answer: ${d.a||'Unanswered'} · ${d.ok?'Correct':(d.a?'Incorrect':'Not attempted')}</div>`).join('');activeTest=null;renderAnalytics()}
+
+const chatTurns=[];
+function apiBase(){return window.PYQ_API_BASE||''}
+async function loadAiFiles(){try{let r=await fetch(apiBase()+'/api/files');let d=await r.json();$('aiFiles').innerHTML=d.files?.length?d.files.map(f=>`<p>📄 ${esc(f.filename)} <span class="pill">${esc(f.status||'indexed')}</span></p>`).join(''):'No PDFs indexed yet.'}catch(e){$('aiFiles').textContent='AI backend is not connected yet. Start the server and configure its environment variables.'}}
+$('uploadPdfs').onclick=async()=>{let files=$('aiPdfs').files;if(!files.length){$('uploadStatus').textContent='Choose at least one PDF.';return}let fd=new FormData();for(let f of files)fd.append('pdfs',f);$('uploadPdfs').disabled=true;$('uploadStatus').textContent='Uploading and indexing PDFs…';try{let r=await fetch(apiBase()+'/api/upload',{method:'POST',body:fd}),d=await r.json();if(!r.ok)throw Error(d.error||'Upload failed');$('uploadStatus').textContent=`Indexed ${d.uploaded.length} PDF(s).`;loadAiFiles()}catch(e){$('uploadStatus').textContent=e.message}finally{$('uploadPdfs').disabled=false}};
+$('askAI').onclick=async()=>{let q=$('aiQuestion').value.trim();if(!q)return;$('askAI').disabled=true;$('aiAnswerStatus').textContent='Searching your PDFs and preparing an answer…';$('chatHistory').innerHTML+=`<div class="q"><b>You</b><p>${esc(q)}</p></div>`;try{let r=await fetch(apiBase()+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,history:chatTurns.slice(-8)})}),d=await r.json();if(!r.ok)throw Error(d.error||'AI request failed');let answer=d.answer||'No answer text returned.';chatTurns.push({role:'user',content:q},{role:'assistant',content:answer});$('chatHistory').innerHTML+=`<div class="q"><b>PYQ AI</b><p style="white-space:pre-wrap">${esc(answer)}</p>${d.sources?.length?'<p class="small muted">Sources: '+d.sources.map(x=>esc(x)).join(', ')+'</p>':''}</div>`;$('aiQuestion').value='';$('aiAnswerStatus').textContent='Answer generated. Check the cited PDF and page references against the original.'}catch(e){$('aiAnswerStatus').textContent=e.message}finally{$('askAI').disabled=false}};
+$('clearChat').onclick=()=>{chatTurns.length=0;$('chatHistory').innerHTML='';$('aiAnswerStatus').textContent='Chat cleared.'};
+const oldSetTab=setTab;setTab=name=>{oldSetTab(name);if(name==='ai')loadAiFiles()};
+
+filters();render();renderStats();
+</script></body></html>
